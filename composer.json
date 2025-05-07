@@ -1,0 +1,9 @@
+{
+    "name": "nando/php",
+    "autoload": {
+        "psr-4": {
+            "Nando\\Php\\": "src/"
+        }
+    },
+    "require": {}
+}

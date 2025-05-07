@@ -1,0 +1,31 @@
+# Node modules (se usar algum pacote JS)
+node_modules/
+
+# Composer dependencies
+/vendor/
+/composer.lock
+
+# Arquivo de ambiente (variáveis secretas)
+/.env
+
+# Banco de dados SQLite
+/data/db.sqlite3
+
+# Arquivos de sessão, cache e logs
+/storage/
+/logs/
+/cache/
+
+# IDEs e editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Arquivos temporários de PHP
+*.log
+*.tmp
