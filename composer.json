@@ -5,5 +5,7 @@
             "Nando\\Php\\": "src/"
         }
     },
-    "require": {}
+    "require": {
+        "nesbot/carbon": "^3.9"
+    }
 }
