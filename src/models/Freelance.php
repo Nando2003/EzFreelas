@@ -15,8 +15,7 @@ class Freelance {
     
     public User $user;
 
-    public function __construct(?int $id, string $title, string $description, int $priceInCents, User $user) {
-        $this->id = $id;
+    public function __construct(string $title, string $description, int $priceInCents, User $user) {
         $this->title = $title;
         $this->description = $description;
         $this->priceInCents = $priceInCents;
@@ -46,6 +45,14 @@ class Freelance {
 
     public function getUser(): User {
         return $this->user;
+    }
+
+    public function setId(int $id): void {
+        $this->id = $id;
+    }
+
+    public function setCreatedAt(Carbon $created_at): void {
+        $this->created_at = $created_at;
     }
 
 }

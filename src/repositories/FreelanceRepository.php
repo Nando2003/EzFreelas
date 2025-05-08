@@ -119,13 +119,16 @@ class FreelanceRepository {
             throw new \Exception("Usuário não encontrado para freelance ID {$row['id']}");
         }
     
-        return new Freelance(
-            (int)$row['id'],
+        $freelance = new Freelance(
             $row['title'],
             $row['description'],
             (int)$row['price_in_cents'],
             $user
         );
+
+        $freelance->setId((int)$row['id']);
+        $freelance->setCreatedAt(new \DateTime($row['created_at']));
+        return $freelance;
     }    
 
 }
