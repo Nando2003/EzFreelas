@@ -44,4 +44,8 @@ class Freelance {
         return $this->created_at;
     }
 
+    public function getUser(): User {
+        return $this->user;
+    }
+
 }

@@ -8,19 +8,17 @@ use App\Model\Freelance;
 
 class Proposal {
 
-    public ?int $id;
-    public string $message;
-    public int $priceInCents;
-    public Carbon $created_at;
+    private ?int $id;
+    private string $message;
+    private int $priceInCents;
+    private Carbon $createdAt;
+    private User $user;
+    private Freelance $freelance;
 
-    public User $user;
-    public Freelance $freelance;
-
-    public function __construct(?int $id, string $message, int $priceInCents, User $user, Freelance $freelance) {
-        $this->id = $id;
+    public function __construct(string $message, int $priceInCents, User $user, Freelance $freelance) {
         $this->message = $message;
         $this->priceInCents = $priceInCents;
-        $this->created_at = Carbon::now();
+        $this->createdAt = Carbon::now();
         $this->user = $user;
         $this->freelance = $freelance;
     }
@@ -38,7 +36,7 @@ class Proposal {
     }
 
     public function getCreatedAt(): Carbon {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
     public function getUser(): User {
@@ -47,6 +45,14 @@ class Proposal {
 
     public function getFreelance(): Freelance {
         return $this->freelance;
+    }
+
+    public function setId(int $id): void {
+        $this->id = $id;
+    }
+
+    public function setCreatedAt(Carbon $createdAt): void {
+        $this->createdAt = $createdAt;
     }
 
 }

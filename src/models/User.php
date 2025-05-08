@@ -6,18 +6,17 @@ use Carbon\Carbon;
 
 class User {
     
-    public ?int $id;
-    public string $username;
-    public string $email;
-    public string $password;
-    public Carbon $created_at;
+    private ?int $id;
+    private string $username;
+    private string $email;
+    private string $password;
+    private Carbon $createdAt;
     
-    public function __construct(?int $id, string $username, string $email, string $password) {
-        $this->id = $id;
+    public function __construct(string $username, string $email, string $plainPassword) {
         $this->username = $username;
         $this->email = $email;
-        $this->password = password_hash($password, PASSWORD_BCRYPT);
-        $this->created_at = Carbon::now();
+        $this->password = password_hash($plainPassword, PASSWORD_BCRYPT);
+        $this->createdAt = Carbon::now();
     }
 
     public function getId(): ?int {
@@ -32,8 +31,20 @@ class User {
         return $this->email;
     }
 
+    public function getPassword(): string {
+        return $this->password;
+    }
+
     public function getCreatedAt(): Carbon {
-        return $this->created_at;
+        return $this->createdAt;
+    }
+
+    public function setId(int $id): void {
+        $this->id = $id;
+    }
+
+    public function setCreatedAt(Carbon $createdAt): void {
+        $this->createdAt = $createdAt;
     }
 
 }
