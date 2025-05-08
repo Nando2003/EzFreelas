@@ -74,6 +74,30 @@ class ProposalRepository {
         return $proposals;
     }
 
+    /**
+    * @return Proposal[]
+    */
+    public function findByUserId(int $userId): array {
+        $stmt = $this->pdo->prepare(
+            'SELECT * FROM proposals WHERE user_id = :user_id'
+        );
+
+        if ($stmt == False) {
+            throw new \Exception("Failed to prepare statement");
+        }
+
+        $stmt->execute([':user_id' => $userId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $proposals = [];
+
+        foreach ($rows as $row) {
+            $proposals[] = $this->mapProposal($row);
+        }
+
+        return $proposals;
+    }
+
     public function delete(int $id): bool {
         $stmt = $this->pdo->prepare(
             'DELETE FROM proposals WHERE id = :id'
