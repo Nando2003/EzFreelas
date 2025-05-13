@@ -6,6 +6,7 @@ require __DIR__ . '/../src/config.php';
 
 use App\Controller\HomeController;
 use App\Controller\UserController;
+use App\Controller\FreelanceController;
 
 session_start();
 
@@ -13,7 +14,8 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 $homeController = new HomeController();
-$userController = new UserController($pdo);
+$userController = new UserController($pdo, fn() => $homeController->gotoHome());
+$freelanceController = new FreelanceController($pdo , fn() => $userController->gotoLoginForm());
 
 if ($method === 'GET') {
 
@@ -21,41 +23,42 @@ if ($method === 'GET') {
         $homeController->gotoHome();
 
     } elseif ($uri === '/home') {
-        $homeController->showHome();
+        $homeController->getHome();
 
     } elseif ($uri === '/about') {
-        $homeController->showAbout();
+        $homeController->getAbout();
         
     } elseif ($uri === '/login') {
-        $userController->showLoginForm();
+        $userController->getLoginForm();
 
     } elseif ($uri === '/register') {
-        $userController->showRegisterForm();
-
+        $userController->getRegisterForm();
+    
+    } elseif ($uri === '/freelance') {
+        $freelanceController->getFreelances();
+    
+    } elseif (preg_match('#^/freelance/(\d+)$#', $uri, $matches)) {
+        $freelanceId = (int)$matches[1];
+        $freelanceController->getFreelance($freelanceId);
+    
+    } elseif ($uri === '/freelance/create') {
+        $freelanceController->getFreelanceForm();
+    
     } else {
-        http_response_code(404);
-        require __DIR__ . '/../src/View/errors/handler404.php';
-        exit;
+        $homeController->getHandler404();
     }
 
 } elseif ($method === 'POST') {
 
     if ($uri === '/register') {
-        $userController->register();
-
-    } elseif ($uri === '/logout') {
-        $userController->logout();
+        $userController->postRegisterForm();
 
     } elseif ($uri === '/login') {
-        $userController->login();
+        $userController->postLoginForm();
         
-    }
+    } elseif ($uri === '/logout') {
+        $userController->postLogout();
 
-    else {
-        http_response_code(404);
-        require __DIR__ . '/../src/View/errors/handler404.php';
-        exit;
-    }
-
+    } 
 } 
 

@@ -3,125 +3,125 @@ namespace App\Controller;
 
 use App\Model\User;
 use App\Repository\UserRepository;
-use App\Repository\FreelanceRepository;
-use App\Repository\ProposalRepository;
 
 use PDO;
 
 
 class UserController {
     private UserRepository $userRepository;
-    private FreelanceRepository $freelanceRepository;
-    private ProposalRepository $proposalRepository;
 
-    public function __construct(PDO $pdo) {
+    /**
+     * @var callable
+     */
+    private $onLoggedIn;
+
+    public function __construct(PDO $pdo, callable $onLoggedIn) {
         $this->userRepository = new UserRepository($pdo);
-        $this->freelanceRepository = new FreelanceRepository($pdo);
-        $this->proposalRepository = new ProposalRepository($pdo);
+        $this->onLoggedIn = $onLoggedIn;
     }
 
-    public function showLoginForm(string $error = ''): void {
+    public function gotoLoginForm(): void {
+        header("Location: /login");
+        exit;
+    }
+
+    public function getLoginForm(string $error = ''): void {
         $userId = $_SESSION['user_id'] ?? null;
 
         if ($userId) {
-            header('Location: /home');
-            exit;
+            ($this->onLoggedIn)();
         }
 
         require __DIR__ . '/../View/auth/login.php';
     }
 
-    public function showRegisterForm(string $error = ''): void {
+    public function getRegisterForm(string $error = ''): void {
         $userId = $_SESSION['user_id'] ?? null;
 
         if ($userId) {
-            header('Location: /home');
-            exit;
+            ($this->onLoggedIn)();
         }
 
         require __DIR__ . '/../View/auth/register.php';
     }
+    
+    public function postRegisterForm(): void {
+        $userId = $_SESSION['user_id'] ?? null;
 
-    public function register(): void {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        if ($userId) {
+            return;
         }
 
+        $name = $_POST['name'] ?? '';
+        $email = $_POST['email'] ?? '';
         $username = $_POST['username'] ?? '';
-        $name     = $_POST['name']     ?? '';
-        $email    = $_POST['email']    ?? '';
         $password = $_POST['password'] ?? '';
 
         if (empty($username) || empty($name) || empty($email) || empty($password)) {
-            $error = "Todos os campos são obrigatórios";
-            $this->showRegisterForm($error);
+            $this->getRegisterForm("Todos os campos são obrigatórios");
             return;
         }
 
         if ($this->userRepository->findByUsername($username)) {
-            $error = "Nome de usuário já cadastrado";
-            $this->showRegisterForm($error);
+            $this->getRegisterForm("Nome de usuário já cadastrado");
             return;
         }
 
         if ($this->userRepository->findByEmail($email)) {
-            $error = "Email já cadastrado";
-            $this->showRegisterForm($error);
+            $this->getRegisterForm("Email já cadastrado");
             return;
         }
 
-        $newUser   = new User($name, $username, $email, $password);
-        $wasSaved  = $this->userRepository->create($newUser);
+        $newUser = new User($name, $username, $email, $password);
+        $wasSaved = $this->userRepository->create($newUser);
 
         if (! $wasSaved) {
-            $error = "Erro ao cadastrar usuário";
-            $this->showRegisterForm($error);
+            $this->getRegisterForm("Erro ao cadastrar usuário");
             return;
         }
 
-        $_SESSION['flash_success'] = "Usuário cadastrado com sucesso";
         $saved = $this->userRepository->findByEmail($email);
+
         $_SESSION['user_id'] = $saved->getId();
+        $_SESSION['flash_success'] = "Usuário cadastrado com sucesso";
 
-        header('Location: /home');
-        exit;
-    }
-    
-    public function logout(): void {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $_SESSION['flash_alert'] = "Usuário desconectado com sucesso";
-        unset($_SESSION['user_id']);
-
-        header('Location: /home');
-        exit;
+        ($this->onLoggedIn)();
     }
 
-    public function login(): void {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+    public function postLoginForm(): void {
+        $userId = $_SESSION['user_id'] ?? null;
+
+        if ($userId) {
+            return;
         }
 
         $username = $_POST['username'] ?? '';
         $password = $_POST['password'] ?? '';
+        $error_message = "Usuário ou senha incorretos";
 
         $user = $this->userRepository->findByUsername($username);
-        $error_message = "Usuário ou senha incorretos";
         
         if (!$user) {
-            $this->showLoginForm($error_message);
-            return;
-        }
-        
-        if (! password_verify($password, $user->getPassword())) {
-            $this->showLoginForm($error_message);
+            $this->getLoginForm($error_message);
             return;
         }
 
-        $_SESSION['user_id']      = $user->getId();
-        $_SESSION['flash_success'] = "Usuário logado com sucesso";
-        header('Location: /home');
+        if (! password_verify($password, $user->getPassword())) {
+            $this->getLoginForm($error_message);
+            return;
+        }
+
+        $_SESSION['user_id'] = $user->getId();
+        $_SESSION['flash_success'] = "Usuário conectado com sucesso";
+
+        ($this->onLoggedIn)();
     }
+
+    public function postLogout(): void {
+        unset($_SESSION['user_id']);
+        $_SESSION['flash_alert'] = "Usuário desconectado com sucesso";
+        
+        ($this->onLoggedIn)();
+    }
+
 }

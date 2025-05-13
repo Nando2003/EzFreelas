@@ -78,25 +78,29 @@ class FreelanceRepository {
     /**
     * @return Freelance[]
     */
-    public function findAll(): array {
+    public function findAllPaginated(int $limit, int $offset) {
         $stmt = $this->pdo->prepare(
-            'SELECT * FROM freelances'
+            'SELECT * FROM freelances ORDER BY created_at DESC LIMIT :limit OFFSET :offset'
         );
 
-        if ($stmt == False) {
-            throw new \Exception("Failed to prepare statement");
-        }
-
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
         $stmt->execute();
+
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $freelances = [];
-
+        
         foreach ($rows as $row) {
             $freelances[] = $this->mapFreelance($row);
         }
 
         return $freelances;
+    }
+
+    public function countAll(): int {
+        $stmt = $this->pdo->query('SELECT COUNT(*) FROM freelances');
+        return (int) $stmt->fetchColumn();
     }
 
     public function delete(int $id): bool {

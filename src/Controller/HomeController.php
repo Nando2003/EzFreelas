@@ -8,11 +8,16 @@ class HomeController {
         exit;
     }
 
-    public function showHome(): void {
+    public function getHome(): void {
         require __DIR__ . '/../View/home/home.php';
     }
 
-    public function showAbout(): void {
+    public function getAbout(): void {
         require __DIR__ . '/../View/home/about.php';
+    }
+
+    public static function getHandler404(): void {
+        http_response_code(400);
+        require __DIR__ . '/../View/errors/handler404.php';
     }
 }

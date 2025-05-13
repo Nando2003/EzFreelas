@@ -16,7 +16,7 @@
     href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;700&display=swap"
     rel="stylesheet"/>
 
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
 
   <?= $extraCss ?? '' ?>
 </head>
@@ -28,7 +28,7 @@
       <div class="container">
 
         <a class="navbar-brand d-flex align-items-center" href="/">
-          <img src="img/logo2.png" alt="Logo" class="nav__logo me-2">
+          <img src="/img/logo2.png" alt="Logo" class="nav__logo me-2">
           <span class="text-white text-uppercase fw-bold fs-3">EzFreela</span>
         </a>
 

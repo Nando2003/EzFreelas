@@ -53,16 +53,23 @@ class ProposalRepository {
     /**
     * @return Proposal[]
     */
-    public function findByFreelanceId(int $freelanceId): array {
-        $stmt = $this->pdo->prepare(
-            'SELECT * FROM proposals WHERE freelance_id = :freelance_id'
-        );
+    public function findByFreelanceIdPaginated(int $freelanceId, int $limit, int $offset): array {
+        $stmt = $this->pdo->prepare('
+            SELECT * FROM proposals
+            WHERE freelance_id = :freelance_id
+            ORDER BY created_at DESC
+            LIMIT :limit OFFSET :offset
+        ');
 
         if ($stmt == False) {
             throw new \Exception("Failed to prepare statement");
         }
 
-        $stmt->execute([':freelance_id' => $freelanceId]);
+        $stmt->bindValue(':freelance_id', $freelanceId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         $proposals = [];
@@ -72,6 +79,12 @@ class ProposalRepository {
         }
 
         return $proposals;
+    }
+
+    public function countByFreelanceId(int $freelanceId): int {
+        $stmt = $this->pdo->prepare('SELECT COUNT(*) FROM proposals WHERE freelance_id = :freelance_id');
+        $stmt->execute([':freelance_id' => $freelanceId]);
+        return (int)$stmt->fetchColumn();
     }
 
     /**
