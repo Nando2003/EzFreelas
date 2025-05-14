@@ -4,10 +4,10 @@ namespace App\Controller;
 use App\Controller\BaseController;
 
 
-class HomeController extends BaseController {
+class AboutController extends BaseController {
 
     public function get(): void {
-        require __DIR__ . '/../View/home/home.php';
+        require __DIR__ . '/../View/home/about.php';
     }
-
+    
 }

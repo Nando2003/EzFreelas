@@ -4,9 +4,13 @@ declare(strict_types=1);
 require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../src/config.php';
 
+use App\Controller\AboutController;
 use App\Controller\HomeController;
-use App\Controller\UserController;
-use App\Controller\FreelanceController;
+use App\Controller\BaseController;
+use App\Controller\Handler404Controller;
+use App\Controller\LoginController;
+use App\Controller\LogoutController;
+use App\Controller\RegisterController;
 
 session_start();
 
@@ -14,50 +18,58 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $method = $_SERVER['REQUEST_METHOD'];
 
 $homeController = new HomeController();
-$userController = new UserController($pdo, fn() => $homeController->gotoHome());
-$freelanceController = new FreelanceController($pdo , fn() => $userController->gotoLoginForm());
+$aboutController = new AboutController();
+$handler400Controller = new Handler404Controller();
+
+$loginController = new LoginController($pdo);
+$registerController = new RegisterController($pdo);
+$logoutController = new LogoutController();
+
 
 if ($method === 'GET') {
 
     if ($uri === '/') {
-        $homeController->gotoHome();
+        BaseController::redirect('/home');
 
     } elseif ($uri === '/home') {
-        $homeController->getHome();
+        $homeController->get();
 
     } elseif ($uri === '/about') {
-        $homeController->getAbout();
+        $aboutController->get();
         
     } elseif ($uri === '/login') {
-        $userController->getLoginForm();
+        $loginController->get();
 
     } elseif ($uri === '/register') {
-        $userController->getRegisterForm();
+        $registerController->get();
     
-    } elseif ($uri === '/freelance') {
-        $freelanceController->getFreelances();
+    } 
+    // elseif ($uri === '/freelance') {
+    //     $freelanceController->get();
     
-    } elseif (preg_match('#^/freelance/(\d+)$#', $uri, $matches)) {
-        $freelanceId = (int)$matches[1];
-        $freelanceController->getFreelance($freelanceId);
+    // } 
+    // elseif (preg_match('#^/freelance/(\d+)$#', $uri, $matches)) {
+    //     $freelanceId = (int)$matches[1];
+    //     $freelanceController->getFreelance($freelanceId);
     
-    } elseif ($uri === '/freelance/create') {
-        $freelanceController->getFreelanceForm();
+    // } elseif ($uri === '/freelance/create') {
+    //     $freelanceController->getFreelanceForm();
     
-    } else {
-        $homeController->getHandler404();
+    // } 
+    else {
+        $handler400Controller->get();
     }
 
 } elseif ($method === 'POST') {
 
     if ($uri === '/register') {
-        $userController->postRegisterForm();
+        $registerController->post();
 
     } elseif ($uri === '/login') {
-        $userController->postLoginForm();
+        $loginController->post();
         
     } elseif ($uri === '/logout') {
-        $userController->postLogout();
+        $logoutController->post();
 
     } 
 } 

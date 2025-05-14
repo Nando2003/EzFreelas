@@ -1,36 +1,66 @@
 <?php
 namespace App\Repository;
 
-use App\Repository\UserRepository;
-use App\Model\Freelance;
 use PDO;
+use App\Model\Freelance;
+use App\Repository\UserRepository;
+use App\Repository\RepositoryInterface;
 
 
-class FreelanceRepository {
+class FreelanceRepository implements RepositoryInterface {
     private PDO $pdo;
 
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
     }
 
-    public function create(Freelance $freelance): bool {
+    private function mapFreelance(array $row): Freelance {
+        $userRepo = new UserRepository($this->pdo);
+        $user = $userRepo->findById($row['user_id']);
+    
+        if (!$user) {
+            throw new \Exception("Usuário não encontrado para freelance ID {$row['id']}");
+        }
+    
+        $freelance = new Freelance(
+            $row['title'],
+            $row['description'],
+            (int)$row['price_in_cents'],
+            $user
+        );
+
+        $freelance->setId((int)$row['id']);
+        $freelance->setCreatedAt(new \DateTime($row['created_at']));
+        return $freelance;
+    }   
+
+    public function add(object $model): Freelance {
+        /**
+         * @var Freelance $model
+         */
+        $freelance = $model;
+
         $stmt = $this->pdo->prepare(
-            'INSERT INTO freelances (title, description, price_in_cents, created_at, user_id) VALUES (:title, :description, :price_in_cents, :created_at, :user_id)'
+            'INSERT INTO freelances (title, description, price_in_cents, created_at, user_id) 
+             VALUES (:title, :description, :price_in_cents, :created_at, :user_id)'
         );
 
         if ($stmt == False) {
             throw new \Exception("Failed to prepare statement");
         } 
 
-        return $stmt->execute(
-            [
-                ':title' => $freelance->getTitle(),
-                ':description' => $freelance->getDescription(),
-                ':price_in_cents' => $freelance->getPriceInCents(),
-                ':created_at' => $freelance->getCreatedAt()->toDateString(),
-                ':user_id' => $freelance->getUser()->getId()
-            ]
-        );
+        $stmt->execute([
+            ':title' => $freelance->getTitle(),
+            ':description' => $freelance->getDescription(),
+            ':price_in_cents' => $freelance->getPriceInCents(),
+            ':created_at' => $freelance->getCreatedAt()->toDateString(),
+            ':user_id' => $freelance->getUser()->getId()
+        ]);
+
+        $newId = (int) $this->pdo->lastInsertId();
+        $freelance->setId($newId);
+
+        return $freelance;
     }
 
     public function findById(int $id): ?Freelance {
@@ -103,7 +133,12 @@ class FreelanceRepository {
         return (int) $stmt->fetchColumn();
     }
 
-    public function delete(int $id): bool {
+    public function remove(object $model): void {
+        /**
+         * @var Freelance $model
+         */
+        $freelance = $model;
+
         $stmt = $this->pdo->prepare(
             'DELETE FROM freelances WHERE id = :id'
         );
@@ -112,27 +147,37 @@ class FreelanceRepository {
             throw new \Exception("Failed to prepare statement");
         }
 
-        return $stmt->execute([':id' => $id]);
+        $stmt->execute([':id' => $freelance->getId()]);
     }
 
-    private function mapFreelance(array $row): Freelance {
-        $userRepo = new UserRepository($this->pdo);
-        $user = $userRepo->findById($row['user_id']);
-    
-        if (!$user) {
-            throw new \Exception("Usuário não encontrado para freelance ID {$row['id']}");
-        }
-    
-        $freelance = new Freelance(
-            $row['title'],
-            $row['description'],
-            (int)$row['price_in_cents'],
-            $user
+    public function update(object $model): Freelance {
+        /**
+         * @var Freelance $model
+         */
+        $freelance = $model;
+
+        $stmt = $this->pdo->prepare(
+            'UPDATE freelances
+                SET title            = :title,
+                    description      = :description,
+                    price_in_cents   = :price_in_cents,
+                    user_id          = :user_id
+              WHERE id               = :id'
         );
 
-        $freelance->setId((int)$row['id']);
-        $freelance->setCreatedAt(new \DateTime($row['created_at']));
+        if (! $stmt) {
+            throw new \Exception("Failed to prepare UPDATE statement");
+        }
+
+        $stmt->execute([
+            ':title'          => $freelance->getTitle(),
+            ':description'    => $freelance->getDescription(),
+            ':price_in_cents' => $freelance->getPriceInCents(),
+            ':user_id'        => $freelance->getUser()->getId(),
+            ':id'             => $freelance->getId(),
+        ]);
+
         return $freelance;
-    }    
+    }
 
 }
