@@ -8,7 +8,7 @@ class Handler404Controller extends BaseController {
 
     public function get(): void {
         http_response_code(400);
-        require __DIR__ . '/../View/errors/handler404.php';
+        require __DIR__ . '/../View/handler404.php';
     }
 
 }

@@ -6,7 +6,9 @@ namespace App\Controller;
 
 abstract class BaseController {
 
-    abstract public function get(): void;
+    public function get(): void {
+        http_response_code(405);
+    }
 
     public function post(): void {
         http_response_code(405);

@@ -19,6 +19,13 @@ ob_start();
     <?php unset($_SESSION['flash_alert']); ?>
   <?php endif; ?>
 
+  <?php if (!empty($_SESSION['flash_danger'])): ?>
+    <div class="alert alert-danger text-center" role="alert">
+      <?= htmlspecialchars($_SESSION['flash_danger']) ?>
+    </div>
+    <?php unset($_SESSION['flash_danger']); ?>
+  <?php endif; ?>
+
   <div class="d-flex justify-content-center align-items-center text-center">
     <div class="card bg-dark text-white border-0 shadow-lg p-4 w-100">
       <div class="card-body">
@@ -71,4 +78,4 @@ ob_start();
 
 <?php
 $content = ob_get_clean();
-require __DIR__ . '/../base.php';
+require __DIR__ . '/base.php';

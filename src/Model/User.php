@@ -61,4 +61,15 @@ class User {
         $this->createdAt = $createdAt;
     }
 
+    public function setName(string $name) {
+        $this->name = $name;
+    }
+
+    public function setEmail(string $email) {
+        $this->email = $email;
+    }
+
+    public function setUsername(string $username) {
+        $this->username = $username;
+    }
 }

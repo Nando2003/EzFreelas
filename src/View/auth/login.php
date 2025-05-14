@@ -7,7 +7,7 @@ ob_start();
   <div class="container bg-dark p-4 rounded">
 
     <div class="d-flex text-center align-items-center"> 
-      <img src="img/logo2.png" alt="Logo" class="nav__logo mb-0 me-2">
+      <img src="/img/logo2.png" alt="Logo" class="nav__logo mb-0 me-2">
       <h2 class="mb-0">Acesse os Freelas</h2>
     </div>
 

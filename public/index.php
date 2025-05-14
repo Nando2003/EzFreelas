@@ -11,6 +11,7 @@ use App\Controller\Handler404Controller;
 use App\Controller\LoginController;
 use App\Controller\LogoutController;
 use App\Controller\RegisterController;
+use App\Controller\ProfileController;
 
 session_start();
 
@@ -19,11 +20,13 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 $homeController = new HomeController();
 $aboutController = new AboutController();
-$handler400Controller = new Handler404Controller();
+$handler404Controller = new Handler404Controller();
 
 $loginController = new LoginController($pdo);
 $registerController = new RegisterController($pdo);
 $logoutController = new LogoutController();
+
+$profileController = new ProfileController($pdo, $handler404Controller);
 
 
 if ($method === 'GET') {
@@ -43,21 +46,12 @@ if ($method === 'GET') {
     } elseif ($uri === '/register') {
         $registerController->get();
     
-    } 
-    // elseif ($uri === '/freelance') {
-    //     $freelanceController->get();
-    
-    // } 
-    // elseif (preg_match('#^/freelance/(\d+)$#', $uri, $matches)) {
-    //     $freelanceId = (int)$matches[1];
-    //     $freelanceController->getFreelance($freelanceId);
-    
-    // } elseif ($uri === '/freelance/create') {
-    //     $freelanceController->getFreelanceForm();
-    
-    // } 
-    else {
-        $handler400Controller->get();
+    } elseif ($uri === '/profile') {
+        $profileController->get();
+        
+    } else {
+        $handler404Controller->get();
+        
     }
 
 } elseif ($method === 'POST') {
@@ -71,6 +65,22 @@ if ($method === 'GET') {
     } elseif ($uri === '/logout') {
         $logoutController->post();
 
-    } 
+    } elseif ($uri === '/profile/update') {
+        $profileController->post();
+        
+    }
 } 
 
+
+// elseif ($uri === '/freelance') {
+    //     $freelanceController->get();
+    
+    // } 
+    // elseif (preg_match('#^/freelance/(\d+)$#', $uri, $matches)) {
+    //     $freelanceId = (int)$matches[1];
+    //     $freelanceController->getFreelance($freelanceId);
+    
+    // } elseif ($uri === '/freelance/create') {
+    //     $freelanceController->getFreelanceForm();
+    
+    // }

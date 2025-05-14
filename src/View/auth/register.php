@@ -9,7 +9,7 @@ ob_start();
       <div class="bg-dark rounded p-4">
 
         <div class="d-flex justify-content-center align-items-center"> 
-          <img src="img/logo2.png" alt="Logo" class="nav__logo mb-0 me-2">
+          <img src="/img/logo2.png" alt="Logo" class="nav__logo mb-0 me-2">
           <h2 class="mb-0">Crie sua conta</h2>
         </div>
 

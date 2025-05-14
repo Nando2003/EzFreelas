@@ -13,7 +13,7 @@ class LoginController extends BaseController{
         $this->userRepository = new UserRepository($pdo);
     }
 
-    public function get(?string $error = null): void {
+    public function get(string $error = ''): void {
         if ($this->getUserId() != null) {
             $this->redirect('/home');
             return;
