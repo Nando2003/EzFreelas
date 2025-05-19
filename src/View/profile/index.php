@@ -3,14 +3,12 @@ $title = "Perfil";
 
 ob_start(); 
 ?>
-<div class="container py-5 ">
-  <div class="row justify-content-center">
-    <div class="col-md-6 col-lg-6">
-      <div class="bg-dark rounded p-4">
+<div class="position-absolute top-50 start-50 translate-middle">
+    <div class="container bg-dark p-4 rounded">
 
         <div class="d-flex justify-content-center align-items-center"> 
           <img src="/img/logo2.png" alt="Logo" class="nav__logo mb-0 me-2">
-          <h2 class="mb-0">Seu perfil</h2>
+          <h2 class="mb-0">Olá, <?= htmlspecialchars($userObj->getUsername()) ?></h2>
         </div>
 
         <?php if (!empty($error)): ?>
@@ -57,11 +55,9 @@ ob_start();
           </form>
         </div>
 
-      </div>
-    </div>
   </div>
 </div>
 <?php
 $content = ob_get_clean();
-$extraJs = "<script src='js/edit_profile.js'></script>";
+$extraJs = "<script src='/js/edit_profile.js'></script>";
 require __DIR__ . '/../base.php';

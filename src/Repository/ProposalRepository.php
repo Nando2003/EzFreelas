@@ -2,8 +2,10 @@
 namespace App\Repository;
 
 use PDO;
+use Carbon\Carbon;
 use App\Model\Proposal;
 use App\Repository\RepositoryInterface;
+
 
 class ProposalRepository implements RepositoryInterface {
     private PDO $pdo;
@@ -35,7 +37,7 @@ class ProposalRepository implements RepositoryInterface {
         );
 
         $proposal->setId((int)$row['id']);
-        $proposal->setCreatedAt(new \DateTime($row['created_at']));
+        $proposal->setCreatedAt(Carbon::parse($row['created_at']));
         return $proposal;
     }
     
@@ -56,7 +58,7 @@ class ProposalRepository implements RepositoryInterface {
         $stmt->execute([
             ':message' => $proposal->getMessage(),
             ':price_in_cents' => $proposal->getPriceInCents(),
-            ':created_at' => $proposal->getCreatedAt()->toDateString(),
+            ':created_at' => $proposal->getCreatedAt()->toDateTimeString(),
             ':user_id' => $proposal->getUser()->getId(),
             ':freelance_id' => $proposal->getFreelance()->getId()
         ]);

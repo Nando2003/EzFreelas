@@ -12,6 +12,8 @@ use App\Controller\LoginController;
 use App\Controller\LogoutController;
 use App\Controller\RegisterController;
 use App\Controller\ProfileController;
+use App\Controller\FreelanceCreateController;
+use App\Controller\FreelanceDetailController;
 
 session_start();
 
@@ -27,7 +29,8 @@ $registerController = new RegisterController($pdo);
 $logoutController = new LogoutController();
 
 $profileController = new ProfileController($pdo, $handler404Controller);
-
+$freelanceCreateController = new FreelanceCreateController($pdo);
+$freelanceDetailController = new FreelanceDetailController($pdo, $handler404Controller);
 
 if ($method === 'GET') {
 
@@ -49,6 +52,13 @@ if ($method === 'GET') {
     } elseif ($uri === '/profile') {
         $profileController->get();
         
+    } elseif ($uri === '/freelance/create') {
+        $freelanceCreateController->get();
+        
+    } elseif (preg_match('#^/freelance/(\d+)$#', $uri, $matches)) {
+        $freelanceId = (int) $matches[1];
+        $freelanceDetailController->get($freelanceId);
+
     } else {
         $handler404Controller->get();
         
@@ -68,6 +78,8 @@ if ($method === 'GET') {
     } elseif ($uri === '/profile/update') {
         $profileController->post();
         
+    } elseif ($uri === '/freelance/create') {
+        $freelanceCreateController->post();
     }
 } 
 

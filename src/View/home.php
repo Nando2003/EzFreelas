@@ -67,6 +67,7 @@ ob_start();
   </div>
 
   <?php if (!isset($_SESSION['user_id'])): ?>
+    <div class="line"></div>
     <div class="text-center my-5">
       <h2 class="fw-bold mb-3">Junte-se agora à comunidade EzFreela</h2>
       <p class="lead">Cadastre-se e comece a contratar ou oferecer serviços em minutos!</p>

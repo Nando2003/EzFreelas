@@ -2,6 +2,7 @@
 namespace App\Repository;
 
 use PDO;
+use Carbon\Carbon;
 use App\Model\Freelance;
 use App\Repository\UserRepository;
 use App\Repository\RepositoryInterface;
@@ -30,7 +31,7 @@ class FreelanceRepository implements RepositoryInterface {
         );
 
         $freelance->setId((int)$row['id']);
-        $freelance->setCreatedAt(new \DateTime($row['created_at']));
+        $freelance->setCreatedAt(Carbon::parse($row['created_at']));
         return $freelance;
     }   
 
@@ -53,7 +54,7 @@ class FreelanceRepository implements RepositoryInterface {
             ':title' => $freelance->getTitle(),
             ':description' => $freelance->getDescription(),
             ':price_in_cents' => $freelance->getPriceInCents(),
-            ':created_at' => $freelance->getCreatedAt()->toDateString(),
+            ':created_at' => $freelance->getCreatedAt()->toDateTimeString(),
             ':user_id' => $freelance->getUser()->getId()
         ]);
 

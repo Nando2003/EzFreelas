@@ -47,7 +47,7 @@ class UserRepository implements RepositoryInterface {
             ':username'   => $user->getUsername(),
             ':email'      => $user->getEmail(),
             ':password'   => $user->getPassword(),
-            ':created_at' => $user->getCreatedAt()->toDateString(),
+            ':created_at' => $user->getCreatedAt()->toDateTimeString(),
         ]);
         
         $newId = (int) $this->pdo->lastInsertId();

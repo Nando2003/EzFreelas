@@ -50,5 +50,5 @@ ob_start();
 </div>
 <?php
 $content = ob_get_clean();
-$extraJs = "<script src='js/login.js'></script>";
+$extraJs = "<script src='/js/login.js'></script>";
 require __DIR__ . '/../base.php';

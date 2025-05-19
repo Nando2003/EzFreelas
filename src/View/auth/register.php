@@ -108,5 +108,5 @@ ob_start();
 </div>
 <?php
 $content = ob_get_clean();
-$extraJs = "<script src='js/register.js'></script>";
+$extraJs = "<script src='/js/register.js'></script>";
 require __DIR__ . '/../base.php';
