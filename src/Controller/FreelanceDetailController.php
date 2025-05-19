@@ -32,6 +32,7 @@ class FreelanceDetailController extends BaseController  {
         }
         
         $user_id = $this->getUserId();
+        $proposal = null;
         $proposals  = [];
         $totalPages = 0;
         $currentPage = 1;
@@ -57,6 +58,22 @@ class FreelanceDetailController extends BaseController  {
             error_log('Proposals: ' . print_r($proposals, true));
 
             $totalPages = (int) ceil($totalCount / $perPage);
+        }
+        else {
+            if ($user_id === null) {
+                $this->handler404->get();
+                return;
+            }
+
+            $proposals = $this->proposalRepository->findByUserId($user_id);
+
+            foreach($proposals as $iproposal) {
+                if ($iproposal->getFreelance()->getId() === $freelance_id) {
+                    $proposal = $iproposal;
+                    break;
+                }
+            }
+            
         }
 
         require __DIR__ . '/../View/freelance/detail.php';

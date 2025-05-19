@@ -7,7 +7,7 @@ ob_start();
     <div class="container bg-dark p-4 rounded">
       <div class="d-flex justify-content-center align-items-center"> 
           <img src="/img/freelance.png" alt="Logo" class="nav__logo mb-0 me-2">
-          <h2 class="mb-0">Faça sua proposta</h2>
+          <h2 class="mb-0">Propor Trabalho</h2>
       </div>
 
       <?php if (!empty($error)): ?>
@@ -25,8 +25,8 @@ ob_start();
               <input type="text" class="form-control" id="id_title" name="title" placeholder="Título do projeto" required>
             </div>
 
-            <div class="col-md-4">
-              <label for="id_price" class="form-label">Valor médio</label>
+            <div class="col-md-4">  
+              <label for="id_price" class="form-label">Valor médio (R$)</label>
               <input type="text" class="form-control" name="price" id="id_price" inputmode="decimals" placeholder="Ex 100.00" required>
             </div>
           </div>
