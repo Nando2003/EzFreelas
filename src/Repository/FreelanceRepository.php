@@ -109,10 +109,25 @@ class FreelanceRepository implements RepositoryInterface {
     /**
     * @return Freelance[]
     */
-    public function findAllPaginated(int $limit, int $offset) {
-        $stmt = $this->pdo->prepare(
-            'SELECT * FROM freelances ORDER BY created_at DESC LIMIT :limit OFFSET :offset'
-        );
+    public function findAllPaginated(int $limit, int $offset, ?int $user_id = null) {
+        if (!$user_id) {
+            $stmt = $this->pdo->prepare(
+                'SELECT * 
+                FROM freelances 
+                ORDER BY created_at DESC 
+                LIMIT :limit OFFSET :offset'
+            );
+        } else {
+            $stmt = $this->pdo->prepare(
+                'SELECT * 
+                FROM freelances 
+                WHERE user_id = :user_id 
+                ORDER BY created_at DESC 
+                LIMIT :limit OFFSET :offset'
+            );
+            $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+        }
+        
 
         $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);

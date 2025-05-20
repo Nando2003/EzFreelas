@@ -9,6 +9,7 @@ O EzFreelas é uma plataforma web voltado ao público que busca serviço e traba
 2. Agora é somente rodar no terminal o seguinte comando:
 
     ```
+    php migrate migrate.php
     php localhost:8000 -t public
     ```
 

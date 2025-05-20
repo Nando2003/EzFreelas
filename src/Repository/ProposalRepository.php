@@ -190,4 +190,59 @@ class ProposalRepository implements RepositoryInterface {
 
         return $proposals;
     }
+
+    /**
+     * Busca todas as propostas de um usuário (sem paginação).
+     *
+     * @param int $userId
+     * @return Proposal[]
+     */
+    public function findAllByUserId(int $userId): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * 
+            FROM proposals 
+            WHERE user_id = :user_id 
+            ORDER BY created_at DESC'
+        );
+        $stmt->execute([':user_id' => $userId]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $proposals = [];
+        foreach ($rows as $row) {
+            $proposals[] = $this->mapProposal($row);
+        }
+        return $proposals;
+    }
+
+    /**
+     * Busca propostas de um usuário com paginação.
+     *
+     * @param int $userId
+     * @param int $limit
+     * @param int $offset
+     * @return Proposal[]
+     */
+    public function findByUserIdPaginated(int $userId, int $limit, int $offset): array
+    {
+        $stmt = $this->pdo->prepare(
+            'SELECT * 
+            FROM proposals 
+            WHERE user_id = :user_id 
+            ORDER BY created_at DESC 
+            LIMIT :limit OFFSET :offset'
+        );
+        
+        $stmt->bindValue(':user_id', $userId, PDO::PARAM_INT);
+        $stmt->bindValue(':limit',   $limit,  PDO::PARAM_INT);
+        $stmt->bindValue(':offset',  $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $proposals = [];
+        foreach ($rows as $row) {
+            $proposals[] = $this->mapProposal($row);
+        }
+        return $proposals;
+    }
 }

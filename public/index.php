@@ -15,6 +15,9 @@ use App\Controller\ProfileController;
 use App\Controller\FreelanceCreateController;
 use App\Controller\FreelanceDetailController;
 use App\Controller\ProposalCreateController;
+use App\Controller\FreelanceListController;
+use App\Controller\ProfileFreelancesController;
+use App\Controller\ProfileProposalsController;
 
 session_start();
 
@@ -33,7 +36,9 @@ $profileController = new ProfileController($pdo, $handler404Controller);
 $freelanceCreateController = new FreelanceCreateController($pdo);
 $freelanceDetailController = new FreelanceDetailController($pdo, $handler404Controller);
 $proposalCreateController = new ProposalCreateController($pdo, $handler404Controller);
-
+$freelanceListController = new FreelanceListController($pdo);
+$profileFreelancesController = new ProfileFreelancesController($pdo);
+$profileProposalController = new ProfileProposalsController($pdo);
 
 if ($method === 'GET') {
 
@@ -61,6 +66,15 @@ if ($method === 'GET') {
     } elseif (preg_match('#^/freelance/(\d+)$#', $uri, $matches)) {
         $freelanceId = (int) $matches[1];
         $freelanceDetailController->get($freelanceId);
+
+    } elseif ($uri === '/freelance') {
+        $freelanceListController->get();
+
+    } elseif ($uri === '/profile/freelance') {
+        $profileFreelancesController->get();
+
+    } elseif ($uri === '/profile/proposal') {
+        $profileProposalController->get();
 
     } else {
         $handler404Controller->get();
